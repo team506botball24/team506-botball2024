@@ -10,18 +10,14 @@ int leftPort = 0;
 int rightPort = 3;
 void timedServo(int port, int targetPos, int delay, int increment) {
     int currentPos = get_servo_position(port);
-    if(targetPos - currentPos > 0) {
-        while(currentPos < targetPos) {
-            set_servo_position(port, currentPos + increment);
-            currentPos = get_servo_position(port);
-            msleep(delay);
-        }
-    } else {
-        while(currentPos > targetPos) {
-            set_servo_position(port, currentPos - increment);
-            currentPos = get_servo_position(port);
-            msleep(delay);
-        }
+    int dx = targetPos - currentPos;
+    int sign = (0 < dx) - (dx < 0);
+    //if dx is positive, sign becomes 1
+    //if dx is negative, sign becomes -1
+    for(int i = 0; i < abs(dx/increment); i++) {
+        set_servo_position(port, currentPos + increment * sign));
+        currentPos = get_servo_position(port);
+        msleep(delay);
     }
 }
 

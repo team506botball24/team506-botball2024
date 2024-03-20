@@ -3,6 +3,11 @@ int clawup=300;
 int clawdown=1050;
 int clawopen=1200;
 int clawclosed=1950;
+
+int armPort = 0;
+int clawPort = 1;
+int leftPort = 0;
+int rightPort = 3;
 void timedServo(int port, int targetPos, int delay, int increment) {
     int currentPos = get_servo_position(port);
     if(targetPos - currentPos > 0) {
@@ -19,28 +24,28 @@ void timedServo(int port, int targetPos, int delay, int increment) {
         }
     }
 }
+
+void timedDriveStraight(int time, int vel) {
+    mav(leftPort, vel);
+    mav(rightPort, vel);
+    msleep(time);
+}
 int main()
 {
     enable_servos();
-    timedServo(0, clawdown, 30, 10);
-    set_servo_position(1,1200);
-    mav(0,1000);
-    mav(3,1000);
-    msleep(8500);
+    timedServo(armPort, clawdown, 30, 10);
+    set_servo_position(clawPort,1200);
+    timedDriveStraight(8500, 1000);
     mav(0,900);
     mav(3,-900);
     msleep(1200);
-    mav(0,-900);
-    mav(3,-900);
-    msleep(1500);
+    timedDriveStraight(1500, -900);
     ao();
-    timedServo(0, clawup, 30, 10);
+    timedServo(armPort, clawup, 30, 10);
     msleep(500);
-    mav(0,900);
-    mav(3,900);
-    msleep(900);
+    timedDriveStraight(900, 900);
     ao();
-    set_servo_position(1,1950);
+    set_servo_position(clawPort,1950);
     msleep(1500);
     disable_servos();
     return 0;

@@ -33,27 +33,37 @@ int main()
     timedServo(armPort, clawdown, 30, 10);
     set_servo_position(clawPort,1200);
     
-    //drive straight for 8.5 seconds
-    timedDriveStraight(8500, 1000);
+    //drive straight for 9 seconds
+    timedDriveStraight(9000, 1000);
     
     //turn 90 degrees
     mav(0,900);
     mav(3,-900);
-    msleep(1200);
+    msleep(1000);
     
-    //straight for 1.5 seconds to moon base and then stop
+    //straight back for 1.5 seconds and then stop
     timedDriveStraight(1500, -900);
     ao();
     
     //raise the arm and drive forward, then stop
     timedServo(armPort, clawup, 30, 10);
     msleep(500);
-    timedDriveStraight(900, 900);
+    timedDriveStraight(1200, 900);
     ao();
     
     //close the claw to grab the cube
-    set_servo_position(clawPort,1950);
+    set_servo_position(clawPort, clawClosed);
     msleep(1500);
+    timedDriveStraight(1000, -900);
+    
+    //turn 90 degrees
+    mav(0,900);
+    mav(3,-900);
+    msleep(200);
+    
+    //open the claw
+    set_servo_position(clawPort,clawOpen);
+    msleep(1000);
     disable_servos();
     return 0;
 }

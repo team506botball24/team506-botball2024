@@ -1,8 +1,8 @@
 #include <kipr/wombat.h>
-int clawup=300;
-int clawdown=1050;
-int clawopen=1200;
-int clawclosed=1950;
+int clawup=679;
+int clawdown=1200;
+int clawopen=1000;
+int clawclosed=1450;
 
 int armPort = 0;
 int clawPort = 1;
@@ -15,7 +15,7 @@ void timedServo(int port, int targetPos, int delay, int increment) {
     //if dx is positive, sign becomes 1
     //if dx is negative, sign becomes -1
     for(int i = 0; i < abs(dx/increment); i++) {
-        set_servo_position(port, currentPos + increment * sign));
+        set_servo_position(port, currentPos + increment * sign);
         currentPos = get_servo_position(port);
         msleep(delay);
     }
@@ -30,8 +30,8 @@ int main()
 {
     enable_servos();
     //lower the arm and open the claw
+    set_servo_position(clawPort,300);
     timedServo(armPort, clawdown, 30, 10);
-    set_servo_position(clawPort,1200);
     
     //drive straight for 9 seconds
     timedDriveStraight(9000, 1000);
@@ -52,7 +52,7 @@ int main()
     ao();
     
     //close the claw to grab the cube
-    set_servo_position(clawPort, clawClosed);
+    set_servo_position(clawPort, clawclosed);
     msleep(1500);
     timedDriveStraight(1000, -900);
     
@@ -62,7 +62,7 @@ int main()
     msleep(200);
     
     //open the claw
-    set_servo_position(clawPort,clawOpen);
+    set_servo_position(clawPort,clawopen);
     msleep(1000);
     disable_servos();
     return 0;

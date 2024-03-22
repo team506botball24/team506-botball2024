@@ -1,13 +1,17 @@
 #include <kipr/wombat.h>
+//servo positions
 int clawup=679;
 int clawdown=1200;
 int clawopen=1000;
 int clawclosed=1450;
 
+//motor & servo ports
 int armPort = 0;
 int clawPort = 1;
 int leftPort = 0;
 int rightPort = 3;
+
+//move a servo at a controlled speed by incrementing its position periodically
 void timedServo(int port, int targetPos, int delay, int increment) {
     int currentPos = get_servo_position(port);
     int dx = targetPos - currentPos;
@@ -21,11 +25,13 @@ void timedServo(int port, int targetPos, int delay, int increment) {
     }
 }
 
+//drive both motors at the same velocity for a time
 void timedDriveStraight(int time, int vel) {
     mav(leftPort, vel);
     mav(rightPort, vel);
     msleep(time);
 }
+
 int main()
 {
     enable_servos();

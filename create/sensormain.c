@@ -24,6 +24,7 @@ void turnRight();
 
 void followLineLeft();
 void followLineRight();
+void followLineMiddle();
 
 void twitchLeft(); //this can be removed
 void arcToLineRight(); //THIS NEEDS TO BE CHECKED
@@ -41,7 +42,7 @@ int main()
     driveToLine();
     fwdDistance(100);
     //follow the line, then catch the rock and turn left
-    followLineLeft(360);
+    followLineMiddle(360);
     lowerWall();
     turnLeft();
     fwdDistance(100);
@@ -179,6 +180,17 @@ void followLineRight(int d) {
             create_drive_direct(50, 100);
         }
         msleep(50);
+    }
+}
+void followLineMiddle(int d) {
+    set_create_distance(0);
+    int rspeed = maxspeed;
+    int lspeed = maxspeed;
+    while(get_create_distance() < d) {
+        lspeed = (get_create_lcliff_amt() > threshold) ? maxspeed : maxspeed/2;
+        rspeed = (get_create_rcliff_amt() > threshold) ? maxspeed : maxspeed/2;
+        create_drive_direct(lspeed, rspeed);
+        msleep(10);
     }
 }
 

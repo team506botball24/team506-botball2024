@@ -1,7 +1,7 @@
 #include <kipr/wombat.h>
 
-const int closed = 750;
-const int open = 1500;
+const int closed = 800;
+const int open = 1600;
 const int servoPort = 0;
 const int wallPort = 1;
 const int threshold = 2000;
@@ -23,6 +23,7 @@ void turnLeft();
 void turnRight();
 
 void followLineLeft();
+void followLineInsideRight();
 void followLineRight();
 void followLineMiddle();
 
@@ -42,7 +43,7 @@ int main()
     driveToLine();
     fwdDistance(100);
     //follow the line, then catch the rock and turn left
-    followLineMiddle(360);
+    followLineInsideRight(360);
     lowerWall();
     turnLeft();
     fwdDistance(100);
@@ -58,19 +59,11 @@ int main()
     // --FIRST BATCH DROPPED--
     //turn around and go back to the line
     turnRight();
-    msleep(700);
-    //set_servo_position(servoPort, 1950);
-    driveToLineSingle();
-    //follow the line up and then arc right, catching the 2 rocks
-    create_drive_direct(maxspeed, -maxspeed);
-    msleep(500);
-    followLineLeft(250);
-    arcToLineRight();
-    //line up and then follow the line to the rock heap
-    driveToLine();
-    turnRight();
-    followLineLeft(400);    
-    backDistance(150);
+    msleep(1000);
+    followLineRight(400);
+    set_servo_position(servoPort, 1400);
+    swipeOpen();
+    backDistance(300);
     // --SECOND BATCH DROPPED--
 
     /* PSUEDO CODE!!
@@ -102,7 +95,7 @@ void raiseWall() {
     set_servo_position(wallPort, 500);
 }
 void lowerWall() {
-    set_servo_position(wallPort, 1400);
+    set_servo_position(wallPort, 1460);
 }
 void swipeClose() {
     set_servo_position(servoPort, closed);
@@ -175,9 +168,20 @@ void followLineRight(int d) {
     set_create_distance(0);
     while(get_create_distance() < d) {
         if(get_create_rfcliff_amt() > threshold) {
-            create_drive_direct(100, 50);
+            create_drive_direct(200, 150);
         } else {
-            create_drive_direct(50, 100);
+            create_drive_direct(150, 200);
+        }
+        msleep(50);
+    }
+}
+void followLineInsideRight(int d) {
+    set_create_distance(0);
+    while(get_create_distance() < d) {
+        if(get_create_rfcliff_amt() > threshold) {
+            create_drive_direct(150, 200);
+        } else {
+            create_drive_direct(200, 150);
         }
         msleep(50);
     }
@@ -189,6 +193,8 @@ void followLineMiddle(int d) {
     while(get_create_distance() < d) {
         lspeed = (get_create_lcliff_amt() > threshold) ? maxspeed : maxspeed/2;
         rspeed = (get_create_rcliff_amt() > threshold) ? maxspeed : maxspeed/2;
+        printf("lspeed: %d ", lspeed);
+        printf("rspeed: %d \n", rspeed);
         create_drive_direct(lspeed, rspeed);
         msleep(10);
     }
@@ -211,5 +217,3 @@ void arcToLineRight() {
        msleep(10);
    }
 }
-
-

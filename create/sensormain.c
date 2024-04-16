@@ -55,18 +55,27 @@ int main()
     msleep(400);
     raiseWall();
     fwdDistance(500);
-    backDistance(150);
+    backDistance(500);
     // --FIRST BATCH DROPPED--
     //turn around and go back to the line
-    turnRight();
-    msleep(1000);
+    turnLeft();
     followLineRight(400);
+    create_stop();
     set_servo_position(servoPort, 1400);
+    msleep(500);
     swipeOpen();
+    lowerWall();
+    msleep(500);
     backDistance(300);
+    turnLeft();
+    turnLeft();
+    followLineLeft(400);
+    raiseWall();
+    fwdDistance(150);
+    backDistance(200);
     // --SECOND BATCH DROPPED--
 
-    /* PSUEDO CODE!!
+    /* unused PSUEDO CODE!!
     //turn and drive to the middle
     turnRight();
     fwdDistance(250); //check

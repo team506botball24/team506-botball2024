@@ -1,7 +1,7 @@
 #include <kipr/wombat.h>
 
 const int closed = 800;
-const int open = 1600;
+const int open = 1700;
 const int servoPort = 0;
 const int wallPort = 1;
 const int threshold = 2000;
@@ -54,12 +54,15 @@ int main()
     create_drive_direct(maxspeed, -maxspeed);
     msleep(400);
     raiseWall();
-    fwdDistance(500);
-    backDistance(500);
+    fwdDistance(600);
+    backDistance(250);
     // --FIRST BATCH DROPPED--
     //turn around and go back to the line
+    //create_drive_direct(-200, 50);
+    //msleep(2000);
     turnLeft();
-    followLineRight(400);
+    msleep(350);
+    followLineRight(300);
     create_stop();
     set_servo_position(servoPort, 1400);
     msleep(500);
@@ -104,7 +107,7 @@ void raiseWall() {
     set_servo_position(wallPort, 500);
 }
 void lowerWall() {
-    set_servo_position(wallPort, 1460);
+    set_servo_position(wallPort, 1500);
 }
 void swipeClose() {
     set_servo_position(servoPort, closed);
@@ -176,7 +179,7 @@ void followLineLeft(int d) {
 void followLineRight(int d) {
     set_create_distance(0);
     while(get_create_distance() < d) {
-        if(get_create_rfcliff_amt() > threshold) {
+        if(get_create_rcliff_amt() > threshold) {
             create_drive_direct(200, 150);
         } else {
             create_drive_direct(150, 200);

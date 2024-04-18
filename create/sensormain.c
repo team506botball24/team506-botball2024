@@ -1,7 +1,7 @@
 #include <kipr/wombat.h>
 
 const int closed = 800;
-const int open = 1700;
+const int open = 1400;
 const int servoPort = 0;
 const int wallPort = 1;
 const int threshold = 2000;
@@ -20,11 +20,14 @@ void driveToLineSingle();
 
 //warning: these are timing based
 void turnLeft();
+void turnLeftTime(int t);
 void turnRight();
 
 void followLineLeft();
-void followLineInsideRight();
+void followLineWideLeft();
 void followLineRight();
+void followLineInsideRight();
+void followLineWideRight();
 void followLineMiddle();
 
 void twitchLeft(); //this can be removed
@@ -57,43 +60,28 @@ int main()
     fwdDistance(600);
     backDistance(250);
     // --FIRST BATCH DROPPED--
-    //turn around and go back to the line
-    //create_drive_direct(-200, 50);
-    //msleep(2000);
+    //turn around and follow line to middle
     turnLeft();
     msleep(350);
-    followLineRight(300);
+    followLineRight(230);
+    //create_stop();
+    //grab the rocks
+    create_drive_direct(-75, 200);
+    msleep(800);
+    fwdDistance(70);
     create_stop();
-    set_servo_position(servoPort, 1400);
+    set_servo_position(servoPort, 1200);
     msleep(500);
-    swipeOpen();
     lowerWall();
     msleep(500);
-    backDistance(300);
-    turnLeft();
-    turnLeft();
-    followLineLeft(400);
+    //turn around and go back
+    turnLeftTime(1200);
+    followLineWideLeft(300);
     raiseWall();
-    fwdDistance(150);
+    fwdDistance(100);
+    turnLeftTime(500);
     backDistance(200);
     // --SECOND BATCH DROPPED--
-
-    /* unused PSUEDO CODE!!
-    //turn and drive to the middle
-    turnRight();
-    fwdDistance(250); //check
-    turnRight();
-    driveToLine();
-    //line up again (could be removed if needed)
-    backDistance(150);
-    turnLeft();
-    driveToLine();
-    backDistance(150); //check
-    turnRight();
-    driveToLine();
-    //drive forward and sort poms!
-    
-    */
     
     
     create_stop();
@@ -151,18 +139,18 @@ void driveToLineSingle() {
 }
 
 void turnLeft() {
-	create_drive_direct(-maxspeed, maxspeed);
+	create_drive_direct(-200, 200);
     msleep(1000);
 }
 
+void turnLeftTime(int t) {
+	create_drive_direct(-200, 200);
+    msleep(t);
+}
+
 void turnRight() {
-    create_drive_direct(maxspeed, -maxspeed);
+    create_drive_direct(200, -200);
     msleep(1000);
-	/*set_create_distance(0);
-    while(get_create_distance()	< 180) {
-        create_drive_direct(250, 0);
-        msleep(10);
-    }*/
 }
 
 void followLineLeft(int d) {
@@ -176,13 +164,35 @@ void followLineLeft(int d) {
         msleep(50);
     }
 }
+void followLineWideLeft(int d) {
+    set_create_distance(0);
+    while(get_create_distance() < d) {
+        if(get_create_lcliff_amt() > 2200) {
+            create_drive_direct(50, 200);
+        } else {
+            create_drive_direct(200, 50);
+        }
+        msleep(50);
+    }
+}
 void followLineRight(int d) {
     set_create_distance(0);
     while(get_create_distance() < d) {
-        if(get_create_rcliff_amt() > threshold) {
-            create_drive_direct(200, 150);
+        if(get_create_rfcliff_amt() > 2200) {
+            create_drive_direct(200, 100);
         } else {
-            create_drive_direct(150, 200);
+            create_drive_direct(100, 200);
+        }
+        msleep(50);
+    }
+}
+void followLineWideRight(int d) {
+    set_create_distance(0);
+    while(get_create_distance() < d) {
+        if(get_create_rcliff_amt() > 2200) {
+            create_drive_direct(200, 50);
+        } else {
+            create_drive_direct(50, 200);
         }
         msleep(50);
     }
@@ -205,8 +215,6 @@ void followLineMiddle(int d) {
     while(get_create_distance() < d) {
         lspeed = (get_create_lcliff_amt() > threshold) ? maxspeed : maxspeed/2;
         rspeed = (get_create_rcliff_amt() > threshold) ? maxspeed : maxspeed/2;
-        printf("lspeed: %d ", lspeed);
-        printf("rspeed: %d \n", rspeed);
         create_drive_direct(lspeed, rspeed);
         msleep(10);
     }

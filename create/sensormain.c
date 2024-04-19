@@ -12,8 +12,8 @@ void lowerWall();
 void swipeClose();
 void swipeOpen();
 
-void fwdDistance();
-void backDistance();
+void fwdDistance(int d);
+void backDistance(int d);
 
 void driveToLine();
 void driveToLineSingle();
@@ -23,12 +23,12 @@ void turnLeft();
 void turnLeftTime(int t);
 void turnRight();
 
-void followLineLeft();
-void followLineWideLeft();
-void followLineRight();
-void followLineInsideRight();
-void followLineWideRight();
-void followLineMiddle();
+void followLineLeft(int d);
+void followLineWideLeft(int d);
+void followLineRight(int d);
+void followLineInsideRight(int d);
+void followLineWideRight(int d);
+void followLineMiddle(int d);
 
 void twitchLeft(); //this can be removed
 void arcToLineRight(); //THIS NEEDS TO BE CHECKED

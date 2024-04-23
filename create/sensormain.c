@@ -1,7 +1,7 @@
 #include <kipr/wombat.h>
 
 const int closed = 800;
-const int open = 1400;
+const int open = 1300;
 const int servoPort = 0;
 const int wallPort = 1;
 const int threshold = 2000;
@@ -16,12 +16,14 @@ void fwdDistance(int d);
 void backDistance(int d);
 
 void driveToLine();
+void driveToLineFront();
 void driveToLineSingle();
 
 //warning: these are timing based
 void turnLeft();
 void turnLeftTime(int t);
 void turnRight();
+void turnRightTime(int t);
 
 void followLineLeft(int d);
 void followLineWideLeft(int d);
@@ -45,33 +47,47 @@ int main()
     swipeOpen();
     driveToLine();
     fwdDistance(100);
-    //follow the line, then catch the rock and turn left
-    followLineInsideRight(360);
+    //drive straight, then catch the rock and turn left
+    fwdDistance(400);
     lowerWall();
     turnLeft();
     fwdDistance(100);
     //line up with next line while pushing fuel poms
-    driveToLine();
-    backDistance(300);
+    driveToLineFront();
+    backDistance(200);
     //turn to the rock heap and deposit rocks
     create_drive_direct(maxspeed, -maxspeed);
     msleep(400);
     raiseWall();
-    fwdDistance(600);
-    backDistance(250);
+    fwdDistance(500);
+    backDistance(150);
     // --FIRST BATCH DROPPED--
     //turn around and follow line to middle
     turnLeft();
-    msleep(350);
-    followLineRight(230);
-    //create_stop();
-    //grab the rocks
-    create_drive_direct(-75, 200);
-    msleep(800);
-    fwdDistance(70);
+    msleep(300);
+    //turn the arms into a straight line
+    set_servo_position(servoPort, 650);
+    followLineRight(150);
+    //twitch the pom right
+    turnRightTime(400);
+    turnLeftTime(400);
+    //open the arms up
     create_stop();
-    set_servo_position(servoPort, 1200);
-    msleep(500);
+    swipeOpen();
+    msleep(300);
+    //go forward and capture first rock
+    fwdDistance(200);
+    create_stop();
+    lowerWall();
+    msleep(200);
+    backDistance(200);
+    //turn and go to second rock
+    turnLeftTime(200);
+    raiseWall();
+    fwdDistance(150);
+    create_stop();
+    //    set_servo_position(servoPort, 1200);
+    //    msleep(500);
     lowerWall();
     msleep(500);
     //turn around and go back
@@ -79,8 +95,9 @@ int main()
     followLineWideLeft(300);
     raiseWall();
     fwdDistance(100);
-    turnLeftTime(500);
-    backDistance(200);
+    turnLeftTime(300);
+    fwdDistance(50);
+    backDistance(400);
     // --SECOND BATCH DROPPED--
     
     
@@ -131,6 +148,17 @@ void driveToLine() {
         msleep(10);
     }
 }
+void driveToLineFront() {
+    int rspeed = maxspeed;
+    int lspeed = maxspeed;
+    while(get_create_lfcliff_amt() > threshold || get_create_rfcliff_amt() > threshold) {
+        //if IR > threshold, then set lspeed to maxspeed. else, set lspeed to 0
+        lspeed = (get_create_lfcliff_amt() > threshold) ? maxspeed : 0;
+        rspeed = (get_create_rfcliff_amt() > threshold) ? maxspeed : 0;
+        create_drive_direct(lspeed, rspeed);
+        msleep(10);
+    }
+}
 void driveToLineSingle() {
     while(get_create_lfcliff_amt() > threshold) {
         create_drive_direct(maxspeed, maxspeed);
@@ -151,6 +179,11 @@ void turnLeftTime(int t) {
 void turnRight() {
     create_drive_direct(200, -200);
     msleep(1000);
+}
+        
+void turnRightTime(int t) {
+	create_drive_direct(200, -200);
+    msleep(t);
 }
 
 void followLineLeft(int d) {

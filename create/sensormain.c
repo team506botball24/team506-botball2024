@@ -1,7 +1,8 @@
 #include <kipr/wombat.h>
 
 const int closed = 800;
-const int open = 1300;
+const int open = 1100;
+const int inverted = 400;
 const int servoPort = 0;
 const int wallPort = 1;
 const int threshold = 2000;
@@ -11,6 +12,7 @@ void raiseWall();
 void lowerWall();
 void swipeClose();
 void swipeOpen();
+void swipeInverted();
 
 void fwdDistance(int d);
 void backDistance(int d);
@@ -60,13 +62,13 @@ int main()
     msleep(400);
     raiseWall();
     fwdDistance(500);
-    backDistance(150);
+    backDistance(140);
     // --FIRST BATCH DROPPED--
     //turn around and follow line to middle
     turnLeft();
     msleep(300);
     //turn the arms into a straight line
-    set_servo_position(servoPort, 650);
+    set_servo_position(servoPort, 570);
     followLineRight(150);
     //twitch the pom right
     turnRightTime(400);
@@ -84,7 +86,7 @@ int main()
     //turn and go to second rock
     turnLeftTime(200);
     raiseWall();
-    fwdDistance(150);
+    fwdDistance(160);
     create_stop();
     //    set_servo_position(servoPort, 1200);
     //    msleep(500);
@@ -97,11 +99,25 @@ int main()
     fwdDistance(100);
     turnLeftTime(300);
     fwdDistance(50);
-    backDistance(400);
+    backDistance(250); // this part keeps changing for some reason
+  
     // --SECOND BATCH DROPPED--
-    
-    
+    //turn and drive to center line
+    turnLeftTime(1300);
+    driveToLine();
+    //go forward to first pom pile and stop
+    //fwdDistance(100);
     create_stop();
+    //sort first pile
+    swipeInverted();
+    msleep(1000);
+    //go forward to second pom pile and stop
+    fwdDistance(200);
+    create_stop();
+    //sort second pile
+    swipeOpen();
+    msleep(1000);
+    
     disable_servos();
     create_disconnect();
     return 0;
@@ -116,6 +132,10 @@ void lowerWall() {
 }
 void swipeClose() {
     set_servo_position(servoPort, closed);
+}
+
+void swipeInverted() {
+    set_servo_position(servoPort, inverted);
 }
 
 void swipeOpen() {

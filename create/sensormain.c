@@ -2,7 +2,7 @@
 
 const int closed = 800;
 const int open = 1100;
-const int inverted = 400;
+const int inverted = 300;
 const int servoPort = 0;
 const int wallPort = 1;
 const int threshold = 2000;
@@ -13,6 +13,7 @@ void lowerWall();
 void swipeClose();
 void swipeOpen();
 void swipeInverted();
+void swipeStraight();
 
 void fwdDistance(int d);
 void backDistance(int d);
@@ -39,6 +40,8 @@ void arcToLineRight(); //THIS NEEDS TO BE CHECKED
 
 int main()
 {
+    wait_for_light(0); //<--- *NOT TESTED*
+    shut_down_in(119);
     create_connect();
     enable_servos();
     //drive to the second line and open arms
@@ -103,7 +106,9 @@ int main()
   
     // --SECOND BATCH DROPPED--
     //turn and drive to center line
+    ao();
     turnLeftTime(1300);
+    ao();
     driveToLine();
     //go forward to first pom pile and stop
     //fwdDistance(100);
@@ -111,12 +116,25 @@ int main()
     //sort first pile
     swipeInverted();
     msleep(1000);
+    swipeOpen();
+    msleep(500);
+    swipeInverted();
+    msleep(500);
     //go forward to second pom pile and stop
     fwdDistance(200);
     create_stop();
     //sort second pile
     swipeOpen();
     msleep(1000);
+    swipeInverted();
+    msleep(500);
+    swipeStraight();
+    backDistance(400);
+    turnRightTime(400);
+    backDistance(600);
+    turnLeftTime(900);
+    create_stop();
+        
     
     disable_servos();
     create_disconnect();
@@ -140,6 +158,10 @@ void swipeInverted() {
 
 void swipeOpen() {
 	set_servo_position(servoPort, open);   
+}
+
+void swipeStraight() {
+    set_servo_position(servoPort, 530);
 }
 
 void fwdDistance(int d) {
